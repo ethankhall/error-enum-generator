@@ -1,0 +1,6 @@
+[workspace]
+members = [
+    "error-enum",
+    "error-enum-macros",
+    "examples"
+]
