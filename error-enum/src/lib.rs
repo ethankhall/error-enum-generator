@@ -1,5 +1,5 @@
 //! # error-enum-generator
-//! 
+//!
 //! This tool is used to automatically generate error codes, and messages
 //! for an enum. The major intent of this is to make error in the CLI
 //! easier to generate.

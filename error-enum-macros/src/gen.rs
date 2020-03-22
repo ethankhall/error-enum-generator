@@ -147,20 +147,17 @@ pub(crate) fn impl_generate_error_wrapper(ast: &syn::DeriveInput) -> TokenStream
                 }
 
                 // Generate a from impl From
-                match &fields.unnamed.first().unwrap().ty {
-                    syn::Type::Path(type_path) => {
-                        if type_path.path.segments.len() == 1 {
-                            let arg_name = &type_path.path.segments.first().unwrap().ident;
-                            from_impl.push(quote! {
-                                impl std::convert::From<#arg_name> for #name {
-                                    fn from(error: #arg_name) -> Self {
-                                        #name::#ident(error)
-                                    }
+                if let syn::Type::Path(type_path) = &fields.unnamed.first().unwrap().ty {
+                    if type_path.path.segments.len() == 1 {
+                        let arg_name = &type_path.path.segments.first().unwrap().ident;
+                        from_impl.push(quote! {
+                            impl std::convert::From<#arg_name> for #name {
+                                fn from(error: #arg_name) -> Self {
+                                    #name::#ident(error)
                                 }
-                            });
-                        }
+                            }
+                        });
                     }
-                    _ => {}
                 }
 
                 display.push(quote! { #name::#ident (param) => write!(f, "{}", param) });
