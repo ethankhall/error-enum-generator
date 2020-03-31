@@ -1,5 +1,6 @@
 extern crate proc_macro;
 
+use std::convert::TryInto;
 use proc_macro_error::abort;
 
 use proc_macro::TokenStream;
@@ -16,6 +17,7 @@ pub(crate) fn impl_generate_error_code(ast: &syn::DeriveInput) -> TokenStream {
         _ => panic!("PrettyError only works on Enums"),
     };
 
+    let mut error_numbers = Vec::new();
     let mut error_codes = Vec::new();
     let mut description = Vec::new();
     let mut display = Vec::new();
@@ -49,10 +51,12 @@ pub(crate) fn impl_generate_error_code(ast: &syn::DeriveInput) -> TokenStream {
             Named(..) => quote! { {..} },
         };
 
-        let code = format!("{}-{:03}", prefix, idx + 1);
+        let error_number: u8 = (idx + 1).try_into().expect("Only 255 errors are supported.");
+        let code = format!("{}-{:03}", prefix, error_number);
         let error_description = format!("{}.", error_description);
 
         error_codes.push(quote! { #name::#ident #params => #code});
+        error_numbers.push(quote! { #name::#ident #params => #error_number});
         description.push(quote! { #name::#ident #params => #error_description});
 
         let (display_params, display_code) = match variant.fields {
@@ -96,6 +100,12 @@ pub(crate) fn impl_generate_error_code(ast: &syn::DeriveInput) -> TokenStream {
             fn get_error_code(&self) -> &str {
                 match self {
                     #(#error_codes),*
+                }
+            }
+
+            fn get_error_number(&self) -> u8 {
+                match self {
+                    #(#error_numbers),*
                 }
             }
 

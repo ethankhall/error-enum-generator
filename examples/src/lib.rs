@@ -52,6 +52,7 @@ mod test {
 fn verify_display() {
     let error = CliErrors::Config(ConfigErrors::UnableToLoadFile("/foo/path".to_string()));
     assert_eq!("CFG-001", error.get_error_code());
+    assert_eq!(1, error.get_error_number());
     assert_eq!(error.description(), "Unable to Load File from disk.");
     assert_eq!(
         format!("{}", error),
@@ -61,6 +62,7 @@ fn verify_display() {
     // Verify counts work
     let error = CliErrors::Config(ConfigErrors::ConfigParseError("missing foo".to_string()));
     assert_eq!("CFG-002", error.get_error_code());
+    assert_eq!(2, error.get_error_number());
     assert_eq!(error.description(), "Unable to parse config file.");
     assert_eq!(
         format!("{}", error),
@@ -70,6 +72,7 @@ fn verify_display() {
     // --- Runtime Errors
     let error = CliErrors::Runtime(RuntimeErrors::Bug("my bad...".to_string()));
     assert_eq!("RNT-001", error.get_error_code());
+    assert_eq!(1, error.get_error_number());
     assert_eq!(error.description(), "This was a bug.");
     assert_eq!(
         format!("{}", error),

@@ -14,5 +14,7 @@ pub use error_enum_macros::{ErrorContainer, ErrorEnum};
 pub trait PrettyError: std::fmt::Display {
     fn get_error_code(&self) -> &str;
 
+    fn get_error_number(&self) -> u8;
+
     fn description(&self) -> &str;
 }
